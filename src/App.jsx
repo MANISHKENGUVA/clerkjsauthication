@@ -1,35 +1,44 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { SignIn, SignUp, SignedIn, SignedOut } from "@clerk/clerk-react";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Router>
+      <Routes>
+        <Route path="/" element={<SignInRedirect />} />
+        <Route path="/signup" element={<SignUpRedirect />} />
+        <Route path="/register" element={<SignUpRedirect />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+// Redirect signed-in users to the dashboard or another route
+function SignInRedirect() {
+  return (
+    <>
+      <SignedIn>
+        <Navigate to="/dashboard" />
+      </SignedIn>
+      <SignedOut>
+        <SignIn />
+      </SignedOut>
+    </>
+  );
+}
+
+// Redirect signed-in users away from the signup page
+function SignUpRedirect() {
+  return (
+    <>
+      <SignedIn>
+        <Navigate to="/dashboard" />
+      </SignedIn>
+      <SignedOut>
+        <SignUp />
+      </SignedOut>
+    </>
+  );
+}
+
+export default App;
